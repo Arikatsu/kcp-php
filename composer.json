@@ -11,5 +11,7 @@
     "autoload": {
         "psr-4": {"labalityowo\\kcp\\": "src/"}
     },
-    "require": {}
+    "require": {
+        "labalityowo/bytebuffer": "dev-stable"
+    }
 }
