@@ -1,0 +1,15 @@
+{
+    "name": "labalityowo/php-kcp",
+    "description": "Implementation of https://github.com/boba-ps/kcp-ts to PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "labalityowo"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"labalityowo\\kcp\\": "src/"}
+    },
+    "require": {}
+}
