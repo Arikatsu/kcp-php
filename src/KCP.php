@@ -3,7 +3,7 @@
 namespace labalityowo\kcp;
 
 use labalityowo\Bytebuffer\Buffer;
-use TeyvatPS\utils\Math;
+use labalityowo\kcp\Utils;
 
 class KCP
 {
@@ -348,7 +348,7 @@ class KCP
             if ($this->stream) {
                 $newSeg->setFrg(0);
             } else {
-                $newSeg->setFrg(Math::unsigned_shift_right((($count - $i - 1) << 24), 24));
+                $newSeg->setFrg(Utils::unsigned_shift_right((($count - $i - 1) << 24), 24));
             }
             array_push($this->sndQueue, $newSeg);
             $sentSize += $size;
@@ -490,7 +490,7 @@ class KCP
     private function wndUnused(): int
     {
         if (count($this->rcvQueue) < $this->rcvWnd) {
-            return $this->rcvWnd - Math::unsigned_shift_right((count($this->rcvQueue) << 16), 16);
+            return $this->rcvWnd - Utils::unsigned_shift_right((count($this->rcvQueue) << 16), 16);
         } else {
             return 0;
         }
@@ -569,7 +569,7 @@ class KCP
             array_push($this->sndBuf, $newSegment);
         }
         $resent = $this->fastResend > 0 ? $this->fastResend : 0xffffffff;
-        $rtoMin = !$this->nodelay ? Math::unsigned_shift_right($this->rxRto, 3) : 0;
+        $rtoMin = !$this->nodelay ? \labalityowo\kcp\Utils::unsigned_shift_right($this->rxRto, 3) : 0;
         $lost = false;
         $change = 0;
         foreach ($this->sndBuf as $sndSegment) {
@@ -620,11 +620,11 @@ class KCP
         $this->flushBuffer($writeIndex);
         if ($change > 0) {
             $inflight = ($this->sndNxt - $this->sndUna);
-            $this->ssThresh = (Math::unsigned_shift_right(($inflight << 16), 16) / 2);
+            $this->ssThresh = (Utils::unsigned_shift_right(($inflight << 16), 16) / 2);
             if ($this->ssThresh < self::KCP_THRESH_MIN) {
                 $this->ssThresh = self::KCP_THRESH_MIN;
             }
-            $this->cWnd = $this->ssThresh + Math::unsigned_shift_right(($resent << 16), 16);
+            $this->cWnd = $this->ssThresh + Utils::unsigned_shift_right(($resent << 16), 16);
             $this->incr = $this->cWnd * $this->mss;
         }
         if ($lost) {
@@ -729,8 +729,8 @@ class KCP
     }
 
     public function setWndSize(int $sndWnd, int $rcvWnd){
-        $this->sndWnd = Math::unsigned_shift_right(($sndWnd << 16), 16);
-        $this->rcvWnd = max(Math::unsigned_shift_right(($rcvWnd << 16), 16), self::KCP_WND_RCV);
+        $this->sndWnd = Utils::unsigned_shift_right(($sndWnd << 16), 16);
+        $this->rcvWnd = max(Utils::unsigned_shift_right(($rcvWnd << 16), 16), self::KCP_WND_RCV);
     }
 
     public function getWaitSnd()
